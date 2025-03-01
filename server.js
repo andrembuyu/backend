@@ -1,22 +1,26 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { PDFDocument } = require('pdf-lib');
-const sgMail = require('@sendgrid/mail'); // Corrected module name
+const sgMail = require('@sendgrid/mail');
 const path = require('path');
 const cors = require('cors');
 
 const app = express();
+
+// CORS configuration
 const corsOptions = {
-    origin: 'https://cai-andre-mbuyus-projects.vercel.app/', // Allow requests from your Netlify frontend
+    origin: 'https://cai-andre-mbuyus-projects.vercel.app', // Allow requests from your Vercel frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
     credentials: true, // Allow cookies and credentials
 };
 
 app.use(cors(corsOptions));
-// Serve static files from the "dist" directory
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // Set SendGrid API key
-sgMail.setApiKey(process.env.SENDGRID_API_KEY); // Ensure this line is present
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Handle form submission
 app.post('/submit', async (req, res) => {
@@ -65,6 +69,7 @@ app.post('/submit', async (req, res) => {
         res.status(500).send(`Failed to send email: ${error.message}`);
     }
 });
+
 // Serve the main HTML file for all other routes
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
@@ -72,6 +77,7 @@ app.get('*', (req, res) => {
 
 // Export the Express app as a serverless function
 module.exports = app;
+
 if (require.main === module) {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
