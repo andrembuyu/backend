@@ -2,19 +2,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { PDFDocument } = require('pdf-lib');
 const sgMail = require('@sendgrid/mail'); // Corrected module name
-const cors = require('cors');
 const path = require('path');
-require('dotenv').config(); // Ensure this line is present
+const cors = require('cors');
 
-const app = express();
+const corsOptions = {
+    origin: 'https://chars-i.netlify.app', // Allow requests from your Netlify frontend
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+    credentials: true, // Allow cookies and credentials
+};
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(cors(corsOptions));
 // Serve static files from the "dist" directory
-app.use(express.static(path.join(__dirname, 'dist')));
 
 // Set SendGrid API key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY); // Ensure this line is present
