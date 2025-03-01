@@ -7,7 +7,7 @@ const cors = require('cors');
 
 const app = express();
 const corsOptions = {
-    origin: 'https://chars-i.netlify.app', // Allow requests from your Netlify frontend
+    origin: 'https://cai-red.vercel.app/', // Allow requests from your Netlify frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
     credentials: true, // Allow cookies and credentials
 };
