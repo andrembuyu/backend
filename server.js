@@ -5,6 +5,7 @@ const sgMail = require('@sendgrid/mail'); // Corrected module name
 const path = require('path');
 const cors = require('cors');
 
+const app = express();
 const corsOptions = {
     origin: 'https://chars-i.netlify.app', // Allow requests from your Netlify frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
