@@ -6,14 +6,9 @@ const cors = require('cors');
 
 const app = express();
 
-const corsOptions = {
-    origin: 'https://chars-i.netlify.app', // Allow requests from your Netlify frontend
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
-    credentials: true, // Allow cookies and credentials
-};
-
-app.use(cors(corsOptions));
+// Middleware
 app.use(bodyParser.json());
+app.use(cors());
 
 // Set SendGrid API key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -65,54 +60,6 @@ app.post('/submit', async (req, res) => {
         res.status(500).send(`Failed to send email: ${error.message}`);
     }
 });
-
-// Serve the main HTML file for all other routes
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
-
-// Add the new /login endpoint
-app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-
-    try {
-        // Retrieve user data from IndexedDB or your database
-        const user = await getUserByEmail(email); // Replace with your actual function
-
-        if (user && user.password === password) {
-            // Return user data (excluding password for security)
-            res.status(200).json({
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                age: user.age
-            });
-        } else {
-            res.status(401).send('Invalid email or password.');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('An error occurred while logging in.');
-    }
-});
-
-// Simulated function to retrieve user by email
-async function getUserByEmail(email) {
-    // Replace this with actual database lookup (e.g., IndexedDB, MongoDB, etc.)
-    const users = [
-        {
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'john.doe@example.com',
-            age: 25,
-            password: 'password123', // In a real app, store hashed passwords
-            gender: 'male'
-        },
-        // Add more users as needed
-    ];
-
-    return users.find(user => user.email === email);
-}
 
 // Start the server
 const PORT = process.env.PORT || 3000;
