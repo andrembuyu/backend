@@ -13,7 +13,7 @@ app.use(cors());
 // Set SendGrid API key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// Handle form submission
+// Handle user registration (email sending only)
 app.post('/submit', async (req, res) => {
     const userInfo = req.body; // Extract user data from the request body
 
@@ -59,6 +59,11 @@ app.post('/submit', async (req, res) => {
         console.error('Error sending email:', error);
         res.status(500).send(`Failed to send email: ${error.message}`);
     }
+});
+
+// Serve the main HTML file for all other routes
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 // Start the server
