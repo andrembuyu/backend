@@ -2,22 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { PDFDocument } = require('pdf-lib');
 const sgMail = require('@sendgrid/mail');
-const path = require('path');
 const cors = require('cors');
 
 const app = express();
 
-// CORS configuration
-const corsOptions = {
-    origin: 'https://cai-andre-mbuyus-projects.vercel.app', // Allow requests from your Vercel frontend
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
-    credentials: true, // Allow cookies and credentials
-};
-
-app.use(cors(corsOptions));
+// Middleware
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(cors());
 
 // Set SendGrid API key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -70,17 +61,8 @@ app.post('/submit', async (req, res) => {
     }
 });
 
-// Serve the main HTML file for all other routes
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
-
-// Export the Express app as a serverless function
-module.exports = app;
-
-if (require.main === module) {
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-    });
-}
